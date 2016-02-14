@@ -1,5 +1,5 @@
-CREATE ROLE shiftwriter WITH LOGIN;
-ALTER ROLE shiftwriter WITH PASSWORD 'password';
+CREATE ROLE etherwriter WITH LOGIN;
+ALTER ROLE etherwriter WITH PASSWORD 'password';
 
 CREATE TABLE blocks (
   "number" BIGSERIAL PRIMARY KEY,
