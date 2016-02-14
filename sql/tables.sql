@@ -46,6 +46,12 @@ SELECT b.number
 FROM blocks b
 WHERE b.number = (SELECT max(b2.number) FROM blocks b2);
 
+CREATE INDEX idx_transactions_from
+ON transactions("from");
+
+CREATE INDEX idx_transactions_to
+ON transactions("to");
+
 GRANT SELECT ON TABLE view_last_block TO etherwriter;
 GRANT INSERT ON TABLE blocks TO etherwriter;
 GRANT INSERT ON TABLE transactions TO etherwriter;
