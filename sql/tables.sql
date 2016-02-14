@@ -10,6 +10,7 @@ CREATE TABLE blocks (
   logsBloom TEXT NOT NULL,
   transactionsRoot TEXT NOT NULL,
   stateRoot TEXT NOT NULL,
+  receiptRoot TEXT NOT NULL,
   miner TEXT NOT NULL,
   difficulty NUMERIC NOT NULL,
   totalDifficulty NUMERIC NOT NULL,
