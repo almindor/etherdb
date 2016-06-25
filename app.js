@@ -42,7 +42,19 @@ function writeToDb( source, table, callback ) {
     params.push( '$' + i++ );
   }
 
-  var sql = 'INSERT INTO ' + table + '(' + fields.join(',') + ')\nVALUES(' + params.join(',')+ ')';
+  var sql = 'INSERT INTO ' + table + '(' + fields.join(',') + ')\n';
+  sql += 'VALUES(' + params.join(',')+ ')\n';
+
+  // upsert on transactions
+  if ( table == 'transactions' ) {
+    sql += 'ON CONFLICT ON CONSTRAINT transactions_pkey\n';
+    sql += 'DO UPDATE SET\n';
+    for ( var j = 0; j < fields.length; j++ ) {
+      var f = fields[j];
+      if ( f == 'hash' ) continue;
+      sql += '"' + f + '" = excluded.' + f + '\n';
+    }
+  }
 
   client.query(sql, values, function(err, result) {
     if( err ) {
