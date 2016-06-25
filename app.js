@@ -25,6 +25,10 @@ function mapValue( p, source ) {
   return String(result);
 }
 
+String.prototype.replaceAt=function(index, character) {
+    return this.substr(0, index) + character + this.substr(index+character.length);
+};
+
 function writeToDb( source, table, callback ) {
   var fields = [];
   var params = [];
@@ -54,7 +58,7 @@ function writeToDb( source, table, callback ) {
       if ( f == 'hash' ) continue;
       sql += f + ' = excluded.' + f + ',\n';
     }
-    sql[sql.length - 2] = '\n';
+    sql = sql.replaceAt(sql.length - 2, '\n');
   }
 
   client.query(sql, values, function(err, result) {
