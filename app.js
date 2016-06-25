@@ -88,7 +88,9 @@ function getBlock( err, num, callback ) {
       return callback();
     }
 
-    console.log( block.number );
+    if ( block.number % 1000 === 0 ) {
+      console.log( block.number );
+    }
 
     writeToDb( block, 'blocks', function( err, result ) {
       if ( err ) {
@@ -104,7 +106,7 @@ function getBlock( err, num, callback ) {
         }
       ], function ( err, result ) {
         if ( err ) {
-          return callback( err );
+          console.error( err ); // just skip, it seems we're getting dup. transactions sometimes!
         }
         getBlock( null, num + 1, callback );
       } );
