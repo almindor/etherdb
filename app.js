@@ -52,7 +52,7 @@ function writeToDb( source, table, callback ) {
     for ( var j = 0; j < fields.length; j++ ) {
       var f = fields[j];
       if ( f == 'hash' ) continue;
-      sql += '"' + f + '" = excluded.' + f + '\n';
+      sql += f + ' = excluded.' + f + '\n';
     }
   }
 
