@@ -1,13 +1,14 @@
 var net = require( 'net' );
 var async = require( 'async' );
 var pg = require( 'pg' );
-var conString = "postgres://etherwriter:password@localhost/etherdb";
+var conString = "postgres://postgres:password@localhost/etherdb";
 var Web3 = require( 'web3' );
 var web3 = new Web3();
 var username = require( 'username' );
 var sleep = require( 'sleep' );
 var client;
-var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.ethereum/geth.ipc';
+var chain = process.argv.length > 2 ? process.argv[2] : 'eth';
+var ipc_path = process.env.ETH_IPC_PATH || '/Users/' + username.sync() + '/Library/Ethereum/geth.ipc';
 
 function mapValue( p, source ) {
   var result = source[p];
@@ -30,6 +31,7 @@ String.prototype.replaceAt=function(index, character) {
 };
 
 function writeToDb( source, table, callback ) {
+  table = chain + '_' + table
   var fields = [];
   var params = [];
   var values = [];
@@ -129,13 +131,13 @@ pg.connect(conString, function(err, c, done) {
   var gb_error;
 
   function getBlocks( callback ) {
-    var sql = 'SELECT COALESCE(lb.number, -1) AS max FROM view_last_block lb';
+    var sql = 'SELECT COALESCE(lb.number, -1) AS max FROM ' + chain + '_last_block lb';
     client.query(sql, [], function( err, result ) {
       if( err ) {
         return callback ( err );
       }
 
-      var fromBlock = (result && result.rows && result.rows.length) ? Number(result.rows[0].max) + 1 : 0;
+      var fromBlock = (result && result.rows && result.rows.length) ? Number(result.rows[0].max) + 1 : 1920000;
       console.log( 'Resuming from block: ' + fromBlock );
       getBlock( null, fromBlock, function ( err ) {
         if ( err ) {
