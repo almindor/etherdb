@@ -159,6 +159,7 @@ pg.connect(conString, function(err, c, done) {
       if ( err ) {
         gb_error = err;
         console.error( err, n );
+        process.exit(1);
       }
     }
   );
