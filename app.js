@@ -32,8 +32,12 @@ function mapValue( p, source ) {
 function mapField( p ) {
   // skipped fields
   if ( ['transactions', 'uncles', 'creates',
-        'author', 'receiptsRoot'].indexOf(p) >= 0 ) {
+        'raw', 'author'].indexOf(p) >= 0 ) {
     return null;
+  }
+
+  if ( p == 'receiptsRoot' ) {
+    return '"receiptroot"'; // historical name, we used the old one in DB
   }
 
   if ( p == 'sealFields' ) {

@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "dependencies": {
     "async": "1.4.x",
-    "pg": "4.4.x",
+    "pg": "6.1.x",
     "web3": "0.15.x",
     "sleep": "3.0.x",
     "username": "2.0.x"
