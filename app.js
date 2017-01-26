@@ -37,7 +37,7 @@ function writeToDb( source, table, callback ) {
   var i = 1;
   for ( var p in source ) {
     // skip internals for now
-    if ( ['transactions', 'uncles'].indexOf(p) >= 0 ) {
+    if ( ['transactions', 'uncles', 'sealFields'].indexOf(p) >= 0 ) {
       continue;
     }
 
@@ -121,6 +121,7 @@ function getBlock( err, num, callback ) {
 
 pg.connect(conString, function(err, c, done) {
   if ( err ) {
+    console.error( err );
     return done( err );
   }
 
