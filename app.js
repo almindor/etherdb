@@ -7,7 +7,7 @@ var web3 = new Web3();
 var username = require( 'username' );
 var sleep = require( 'sleep' );
 var client;
-var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.parity/jsonrpc.ipc';
+var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.local/share/io.parity.ethereum/jsonrpc.ipc';
 
 function mapValue( p, source ) {
   var result = source[p];
