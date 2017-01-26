@@ -9,6 +9,13 @@ var sleep = require( 'sleep' );
 var client;
 var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.local/share/io.parity.ethereum/jsonrpc.ipc';
 
+var validFields = [
+  'number', 'hash', 'parentHash', 'nonce', 'sha3Uncles', 'logsBloom', 'transactionsRoot',
+  'stateRoot', 'receiptRoot', 'miner', 'difficulty', 'totalDifficulty', 'size',
+  'extraData', 'gasLimit', 'gasUsed', 'timestamp', 'blockHash', 'blockNumber',
+  'transactionIndex', 'from', 'to', 'value',  'gas', 'gasPrice', 'input'
+];
+
 function mapValue( p, source ) {
   var result = source[p];
 
@@ -26,9 +33,7 @@ function mapValue( p, source ) {
 }
 
 function mapField( p ) {
-  // skipped fields
-  if ( ['transactions', 'uncles', 'creates',
-        'raw', 'author', 'mixHash', 'sealFields'].indexOf(p) >= 0 ) {
+  if ( validFields.indexOf(p) < 0 ) {
     return null;
   }
 
