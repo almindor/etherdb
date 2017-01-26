@@ -7,7 +7,7 @@ var web3 = new Web3();
 var username = require( 'username' );
 var sleep = require( 'sleep' );
 var client;
-var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.ethereum/geth.ipc';
+var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.parity/jsonrpc.ipc';
 
 function mapValue( p, source ) {
   var result = source[p];
@@ -25,6 +25,24 @@ function mapValue( p, source ) {
   return String(result);
 }
 
+function mapField( p ) {
+  // skipped fields
+  if ( ['transactions', 'uncles', 'creates',
+        'raw', 'author', 'mixHash', 'sealFields'].indexOf(p) >= 0 ) {
+    return null;
+  }
+
+  if ( p == 'receiptsRoot' ) {
+    return '"receiptroot"'; // historical name, we used the old one in DB
+  }
+
+  if ( p == 'sealFields' ) {
+    return '"nonce"'; // parity
+  }
+
+  return '"' + p.toLowerCase() + '"';
+}
+
 String.prototype.replaceAt=function(index, character) {
     return this.substr(0, index) + character + this.substr(index+character.length);
 };
@@ -36,12 +54,10 @@ function writeToDb( source, table, callback ) {
 
   var i = 1;
   for ( var p in source ) {
-    // skip internals for now
-    if ( ['transactions', 'uncles', 'sealFields'].indexOf(p) >= 0 ) {
-      continue;
-    }
+    var field = mapField( p );
+    if ( !field ) continue; // skipped field
 
-    fields.push( '"' + p.toLowerCase() + '"' );
+    fields.push( field );
     values.push( mapValue( p, source ) );
     params.push( '$' + i++ );
   }
@@ -121,7 +137,7 @@ function getBlock( err, num, callback ) {
 
 pg.connect(conString, function(err, c, done) {
   if ( err ) {
-    console.error( err );
+    console.error('Error on PSQL connection: ' + err);
     return done( err );
   }
 
@@ -160,6 +176,7 @@ pg.connect(conString, function(err, c, done) {
       if ( err ) {
         gb_error = err;
         console.error( err, n );
+        process.exit(1);
       }
     }
   );
