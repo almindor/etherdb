@@ -10,6 +10,14 @@ var client;
 // var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.parity/jsonrpc.ipc';
 var config = require('./config');
 
+var validFields = [
+  'number', 'hash', 'parentHash', 'nonce', 'sha3Uncles', 'logsBloom', 'transactionsRoot',
+  'stateRoot', 'receiptRoot', 'miner', 'difficulty', 'totalDifficulty', 'size',
+  'extraData', 'gasLimit', 'gasUsed', 'timestamp', 'blockHash', 'blockNumber',
+  'transactionIndex', 'from', 'to', 'value',  'gas', 'gasPrice', 'input',
+  'mixhash', 'v', 'r', 's'
+];
+
 function mapValue( p, source ) {
   var result = source[p];
 
@@ -23,17 +31,11 @@ function mapValue( p, source ) {
     return new Date(Number(result) * 1000);
   }
 
-  if ( p == 'sealFields' ) { // nonce in parity
-    return result[1]; // 2nd in array is nonce
-  }
-
   return String(result);
 }
 
 function mapField( p ) {
-  // skipped fields
-  if ( ['transactions', 'uncles', 'creates',
-        'raw', 'author'].indexOf(p) >= 0 ) {
+  if ( validFields.indexOf(p) < 0 ) {
     return null;
   }
 
