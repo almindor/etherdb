@@ -12,7 +12,7 @@ var config = require('./config');
 
 var validFields = [
   'number', 'hash', 'parentHash', 'nonce', 'sha3Uncles', 'logsBloom', 'transactionsRoot',
-  'stateRoot', 'receiptRoot', 'miner', 'difficulty', 'totalDifficulty', 'size',
+  'stateRoot', 'receiptsRoot', 'miner', 'difficulty', 'totalDifficulty', 'size',
   'extraData', 'gasLimit', 'gasUsed', 'timestamp', 'blockHash', 'blockNumber',
   'transactionIndex', 'from', 'to', 'value',  'gas', 'gasPrice', 'input',
   'mixhash', 'v', 'r', 's'
@@ -37,10 +37,6 @@ function mapValue( p, source ) {
 function mapField( p ) {
   if ( validFields.indexOf(p) < 0 ) {
     return null;
-  }
-
-  if ( p == 'receiptsRoot' ) {
-    return '"receiptroot"'; // historical name, we used the old one in DB
   }
 
   if ( p == 'sealFields' ) {
