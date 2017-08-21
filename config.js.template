@@ -1,0 +1,9 @@
+var db_path = 'postgres://etherwriter:password@localhost/etherdb';
+var ws_path = 'ws://localhost';
+var ws_origin = 'http://localhost';
+
+module.exports = {
+  db_path: db_path,
+  ws_path: ws_path,
+  ws_origin: ws_origin
+};

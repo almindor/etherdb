@@ -18,7 +18,8 @@ CREATE TABLE blocks (
   extraData TEXT NOT NULL,
   gasLimit BIGINT NOT NULL,
   gasUsed BIGINT NOT NULL,
-  "timestamp" TIMESTAMP NOT NULL
+  "timestamp" TIMESTAMP NOT NULL,
+  mixhash TEXT
 );
 
 CREATE TABLE transactions (
@@ -32,7 +33,10 @@ CREATE TABLE transactions (
   "value" NUMERIC NOT NULL,
   gas BIGINT NOT NULL,
   gasPrice NUMERIC NOT NULL,
-  "input" TEXT
+  "input" TEXT,
+  v TEXT,
+  r TEXT,
+  s TEXT
 );
 
 CREATE TABLE uncles (

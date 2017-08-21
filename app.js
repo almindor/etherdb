@@ -1,13 +1,14 @@
 var net = require( 'net' );
 var async = require( 'async' );
 var pg = require( 'pg' );
-var conString = "postgres://etherwriter:password@localhost/etherdb";
 var Web3 = require( 'web3' );
 var web3 = new Web3();
+var WsProvider = require( './web3/wsprovider' );
 var username = require( 'username' );
 var sleep = require( 'sleep' );
 var client;
-var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.parity/jsonrpc.ipc';
+// var ipc_path = process.env.ETH_IPC_PATH || '/home/' + username.sync() + '/.parity/jsonrpc.ipc';
+var config = require('./config');
 
 function mapValue( p, source ) {
   var result = source[p];
@@ -139,49 +140,53 @@ function getBlock( err, num, callback ) {
   } );
 }
 
-pg.connect(conString, function(err, c, done) {
+pg.connect(config.db_path, function(err, c, done) {
   if ( err ) {
     console.error('Error on PSQL connection: ' + err);
     return done( err );
   }
 
   client = c;
-  web3.setProvider(new web3.providers.IpcProvider(ipc_path, net));
-  var gb_error;
+  // web3.setProvider(new web3.providers.IpcProvider(ipc_path, net));
+  web3.setProvider(new WsProvider(config.ws_path, {
+    origin: config.ws_origin
+  }, function() {
+    var gb_error;
 
-  function getBlocks( callback ) {
-    var sql = 'SELECT COALESCE(lb.number, -1) AS max FROM view_last_block lb';
-    client.query(sql, [], function( err, result ) {
-      if( err ) {
-        return callback ( err );
-      }
-
-      var fromBlock = (result && result.rows && result.rows.length) ? Number(result.rows[0].max) + 1 : 0;
-      console.log( 'Resuming from block: ' + fromBlock );
-      getBlock( null, fromBlock, function ( err ) {
-        if ( err ) {
-          return callback( err );
+    function getBlocks( callback ) {
+      var sql = 'SELECT COALESCE(lb.number, -1) AS max FROM view_last_block lb';
+      client.query(sql, [], function( err, result ) {
+        if( err ) {
+          return callback ( err );
         }
 
-        console.log( 'Done batch, sleeping 20s' );
-        sleep.sleep( 20 );
-        return callback();
-      } );
-    } );
-  }
+        var fromBlock = (result && result.rows && result.rows.length) ? Number(result.rows[0].max) + 1 : 0;
+        console.log( 'Resuming from block: ' + fromBlock );
+        getBlock( null, fromBlock, function ( err ) {
+          if ( err ) {
+            return callback( err );
+          }
 
-  async.whilst(
-    function () {
-      return !gb_error;
-    },
-    getBlocks,
-    function ( err, n ) {
-      done( err );
-      if ( err ) {
-        gb_error = err;
-        console.error( err, n );
-        process.exit(1);
-      }
+          console.log( 'Done batch, sleeping 20s' );
+          sleep.sleep( 20 );
+          return callback();
+        } );
+      } );
     }
-  );
+
+    async.whilst(
+      function () {
+        return !gb_error;
+      },
+      getBlocks,
+      function ( err, n ) {
+        done( err );
+        if ( err ) {
+          gb_error = err;
+          console.error( err, n );
+          process.exit(1);
+        }
+      }
+    );
+  }));
 } );
