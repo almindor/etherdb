@@ -91,15 +91,24 @@ function writeToDb( source, table, callback ) {
 }
 
 function processDetails( block, table, callback ) {
-  async.each( block[table], function ( d, done ) {
-    if ( table == 'uncles' ) {
-      d = { hash: d, blockNumber: block.number }; // we need this in the DB for uncles
+  client.query('BEGIN', function(err) {
+    if ( err ) {
+      return callback(err);
     }
 
-    writeToDb( d, table, done );
-  }, function ( err ) {
-    return callback( err ) ;
-  } );
+    async.each( block[table], function ( d, done ) {
+      if ( table == 'uncles' ) {
+        d = { hash: d, blockNumber: block.number }; // we need this in the DB for uncles
+      }
+
+      writeToDb( d, table, done );
+    }, function ( err ) {
+      var finish = err ? 'ROLLBACK' : 'COMMIT'
+      client.query( finish, function() {
+        return callback( err );
+      } );
+    } );
+  });
 }
 
 function getBlock( err, num, callback ) {
