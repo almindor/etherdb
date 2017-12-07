@@ -48,16 +48,18 @@ var WsProvider = function (host, options, callback) {
   });
 
   this.connection.on('message', function(msg) {
+    var result;
+
     try {
       result = JSON.parse(msg);
-      var id = result.id;
-      // fire the callback
-      if(_this.responseCallbacks[id]) {
-        _this.responseCallbacks[id](null, result);
-        delete _this.responseCallbacks[id];
-      }
     } catch (e) {
       throw errors.InvalidResponse(e.data);
+    }
+    var id = result.id;
+    // fire the callback
+    if(_this.responseCallbacks[id]) {
+      _this.responseCallbacks[id](null, result);
+      delete _this.responseCallbacks[id];
     }
 
     return result;
