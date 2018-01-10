@@ -1,7 +1,7 @@
 CREATE ROLE etherwriter WITH LOGIN;
 ALTER ROLE etherwriter WITH PASSWORD 'password';
 
-CREATE TABLE blocks (
+CREATE UNLOGGED TABLE blocks (
   "number" BIGSERIAL PRIMARY KEY,
   hash TEXT NOT NULL UNIQUE,
   parentHash TEXT NOT NULL,
@@ -22,7 +22,7 @@ CREATE TABLE blocks (
   mixhash TEXT
 );
 
-CREATE TABLE transactions (
+CREATE UNLOGGED TABLE transactions (
   hash TEXT PRIMARY KEY,
   nonce BIGINT,
   blockHash TEXT NOT NULL REFERENCES blocks(hash) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -39,7 +39,7 @@ CREATE TABLE transactions (
   s TEXT
 );
 
-CREATE TABLE uncles (
+CREATE UNLOGGED TABLE uncles (
   hash TEXT PRIMARY KEY,
   blockNumber BIGINT NOT NULL REFERENCES blocks("number") ON DELETE CASCADE ON UPDATE CASCADE
 );

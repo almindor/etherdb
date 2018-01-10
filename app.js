@@ -68,9 +68,9 @@ function writeToDb( source, table, callback ) {
   var sql = 'INSERT INTO ' + table + '(' + fields.join(',') + ')\n';
   sql += 'VALUES(' + params.join(',')+ ')\n';
 
-  // upsert on transactions
-  if ( table == 'transactions' ) {
-    sql += 'ON CONFLICT ON CONSTRAINT transactions_pkey\n';
+  // upsert on transactions and uncles
+  if ( ['transactions', 'uncles'].indexOf(table) >= 0 ) {
+    sql += `ON CONFLICT ON CONSTRAINT ${table}_pkey\n`;
     sql += 'DO UPDATE SET\n';
     for ( var j = 0; j < fields.length; j++ ) {
       var f = fields[j];
