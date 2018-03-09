@@ -59,4 +59,4 @@ ON transactions("to");
 GRANT SELECT ON TABLE view_last_block TO etherwriter;
 GRANT INSERT ON TABLE blocks TO etherwriter;
 GRANT INSERT, SELECT, UPDATE ON TABLE transactions TO etherwriter;
-GRANT INSERT ON TABLE uncles TO etherwriter;
+GRANT INSERT, SELECT, UPDATE ON TABLE uncles TO etherwriter;
