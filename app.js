@@ -47,7 +47,7 @@ function mapField( p ) {
 }
 
 String.prototype.replaceAt=function(index, character) {
-    return this.substr(0, index) + character + this.substr(index+character.length);
+  return this.substr(0, index) + character + this.substr(index+character.length);
 };
 
 function writeToDb( source, table, callback ) {
@@ -82,8 +82,8 @@ function writeToDb( source, table, callback ) {
 
   client.query(sql, values, function(err, result) {
     if( err ) {
-      console.error( sql );
-      console.error( values );
+//      console.error( sql );
+//      console.error( values );
       return callback( err );
     }
     callback( null, result );
@@ -139,7 +139,7 @@ function getBlock( err, num, callback ) {
         }
       ], function ( err, result ) {
         if ( err ) {
-          console.error( err ); // just skip, it seems we're getting dup. transactions sometimes!
+          return callback( err );
         }
         getBlock( null, num + 1, callback );
       } );
