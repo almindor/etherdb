@@ -2,11 +2,11 @@
   "name": "etherdb",
   "version": "0.1.0",
   "dependencies": {
-    "async": "2.1.x",
+    "async": "2.6.x",
     "pg": "6.1.x",
     "web3": "0.18.x",
     "sleep": "5.1.x",
     "username": "2.3.x",
-    "ws": "3.1.x"
+    "ws": "5.2.x"
   }
 }
